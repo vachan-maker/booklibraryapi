@@ -40,3 +40,12 @@ async def get_book(id:int,db:Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Book not found")
     else:
         return book
+@app.delete("/book/{id}")
+async def delete_book(id:int,db:Session = Depends(get_db)):
+    book = db.query(models.Book).get(id)
+    if book is None:
+        raise HTTPException(status_code=404,detail="Book not found")
+    else:
+        db.delete(book)
+        db.commit()
+        return ("Book deleted successfully")
