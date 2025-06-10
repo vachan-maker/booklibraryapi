@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends,Request
+from fastapi import FastAPI,Depends,Request,HTTPException
 import models,database
 from sqlalchemy.orm import Session
 
@@ -32,3 +32,11 @@ async def create_book(request: Request, db: Session = Depends(get_db)):
 async def get_book(db: Session = Depends(get_db)):
     books = db.query(models.Book).all()
     return books
+
+@app.get("/book/{id}")
+async def get_book(id:int,db:Session = Depends(get_db)):
+    book = db.query(models.Book).get(id)
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    else:
+        return book
