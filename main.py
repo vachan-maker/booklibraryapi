@@ -1,6 +1,7 @@
 from fastapi import FastAPI,Depends,Request,HTTPException
 import models,database
 from sqlalchemy.orm import Session
+import random
 
 models.Base.metadata.create_all(database.engine)
 app = FastAPI()
@@ -12,7 +13,7 @@ def get_db():
     finally:
         db.close() #close the session afterwards
 
-@app.post("/books")
+@app.post("/books/")
 async def create_book(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
     book = models.Book(
@@ -49,3 +50,9 @@ async def delete_book(id:int,db:Session = Depends(get_db)):
         db.delete(book)
         db.commit()
         return ("Book deleted successfully")
+    
+@app.get("/random")
+async def get_random_book(db:Session = Depends(get_db)):
+    random_number = random.randint(1,10)
+    book = db.query(models.Book).get(random_number)
+    return book
