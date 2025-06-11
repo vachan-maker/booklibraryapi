@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Depends,Request,HTTPException
-import models,database
+import models,database,schemas
 from sqlalchemy.orm import Session
 import random
 
@@ -14,14 +14,8 @@ def get_db():
         db.close() #close the session afterwards
 
 @app.post("/books/")
-async def create_book(request: Request, db: Session = Depends(get_db)):
-    data = await request.json()
-    book = models.Book(
-        title=data.get("title"),
-        author=data.get("author"),
-        description=data.get("description", ""),
-        year=data.get("year_published"),
-        available=data.get("available", True)
+async def create_book(book:schemas.BookCreate, db: Session = Depends(get_db)):
+    book = models.Book(**book.model_dump()
     )
     db.add(book)
     db.commit()
