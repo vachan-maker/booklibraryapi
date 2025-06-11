@@ -29,19 +29,19 @@ async def create_book(request: Request, db: Session = Depends(get_db)):
 
     return {"id":book.id,"message":"Book added Successfully"}
 
-@app.get("/book")
+@app.get("/book/")
 async def get_book(db: Session = Depends(get_db)):
     books = db.query(models.Book).all()
     return books
 
-@app.get("/book/{id}")
+@app.get("/book/{id}/")
 async def get_book(id:int,db:Session = Depends(get_db)):
     book = db.query(models.Book).get(id)
     if book is None:
         raise HTTPException(status_code=404, detail="Book not found")
     else:
         return book
-@app.delete("/book/{id}")
+@app.delete("/book/{id}/")
 async def delete_book(id:int,db:Session = Depends(get_db)):
     book = db.query(models.Book).get(id)
     if book is None:
@@ -51,7 +51,7 @@ async def delete_book(id:int,db:Session = Depends(get_db)):
         db.commit()
         return ("Book deleted successfully")
     
-@app.get("/random")
+@app.get("/random/")
 async def get_random_book(db:Session = Depends(get_db)):
     random_number = random.randint(1,10)
     book = db.query(models.Book).get(random_number)
